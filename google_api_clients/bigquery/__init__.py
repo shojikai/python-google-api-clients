@@ -462,14 +462,15 @@ class BigQuery(GoogleApiClient):
 
         if 'rows' not in res:
             return []
-        if 'pageToken' in res:
-            ret = res['rows']
-            options['page_token'] = res['pageToken']
-            options['start_index'] = options.get('start_index', 0) + len(res['rows'])
-            ret.extend(self.get_query_results(job_id, **options))
-            return ret
         else:
-            return res['rows']
+            ret = []
+            for row in res['rows']:
+                ret.append([column['v'] for column in row['f']])
+            if 'pageToken' in res:
+                options['page_token'] = res['pageToken']
+                options['start_index'] = options.get('start_index', 0) + len(res['rows'])
+                ret.extend(self.get_query_results(job_id, **options))
+            return ret
 
     def select(self, query, **options):
         kwargs = {
@@ -499,10 +500,14 @@ class BigQuery(GoogleApiClient):
 
         if 'rows' not in res:
             return []
-        elif 'pageToken' in res:
-            ret = res['rows']
-            ret.extend(self.get_query_results(res['jobReference']['jobId'], page_token=res['pageToken'],
-                start_index=len(res['rows'])))
-            return ret
         else:
-            return res['rows']
+            ret = []
+            for row in res['rows']:
+                ret.append([column['v'] for column in row['f']])
+            if 'pageToken' in res:
+                ret.extend(self.get_query_results(res['jobReference']['jobId'], page_token=res['pageToken'],
+                    start_index=len(res['rows'])))
+            return ret
+
+    def query(self, query, **options):
+        return self.select(query, **options)
