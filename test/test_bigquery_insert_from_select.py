@@ -35,18 +35,18 @@ class BigQueryTest(unittest.TestCase):
         self.bq.drop_table(self.table_id)
         self.bq.drop_dataset(self.dataset_id, delete_contents=True)
 
-    def test_error_allow_large_results(self):
-        schema = [
-            { 'name': 'word', 'type': 'STRING', 'mode': 'REQUIRED' },
-            { 'name': 'word_count', 'type': 'INTEGER', 'mode': 'REQUIRED' },
-        ]
-        self.bq.create_table(self.table_id, schema=schema)
-
-        query = 'SELECT word,word_count FROM [publicdata:samples.shakespeare] LIMIT 10'
-
-        # Cannnot append to required fields when allowLargeResults is True
-        with self.assertRaises(BigQueryError):
-            self.bq.insert_from_select(self.table_id, query, allow_large_results=True)
+#    def test_error_allow_large_results(self):
+#        schema = [
+#            { 'name': 'word', 'type': 'STRING', 'mode': 'REQUIRED' },
+#            { 'name': 'word_count', 'type': 'INTEGER', 'mode': 'REQUIRED' },
+#        ]
+#        self.bq.create_table(self.table_id, schema=schema)
+#
+#        query = 'SELECT word,word_count FROM [publicdata:samples.shakespeare] LIMIT 10'
+#
+#        # Cannnot append to required fields when allowLargeResults is True
+#        with self.assertRaises(BigQueryError):
+#            res = self.bq.insert_from_select(self.table_id, query, allow_large_results=True)
 
     def test_error_no_required_field(self):
         schema = [

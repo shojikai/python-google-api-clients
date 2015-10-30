@@ -25,7 +25,7 @@ class BigQueryTest(unittest.TestCase):
         print('exists dataset')
         if self.bq.exists_dataset(self.dataset_id):
             print('delete dataset')
-            res = self.bq.drop_dataset(self.dataset_id)
+            res = self.bq.drop_dataset(self.dataset_id, delete_contents=True)
             self.assertTrue(bool(res))
 
         print('create dataset')
