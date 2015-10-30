@@ -2,7 +2,7 @@ import os
 import sys
 import unittest
 
-sys.path.append(os.path.dirname(os.path.abspath(__file__)) + '/../')
+sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)) + '/../')
 
 from google_api_clients.bigquery import BigQuery
 
