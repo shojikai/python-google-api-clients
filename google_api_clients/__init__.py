@@ -1,10 +1,9 @@
 import httplib2
 import json
-import re
 
 from apiclient import discovery
-from googleapiclient.errors import HttpError
 from oauth2client.client import GoogleCredentials
+from oauth2client.client import SignedJwtAssertionCredentials
 from types import ListType
 
 from .errors import MethodNameError
@@ -16,10 +15,28 @@ class GoogleApiClient(object):
         self.service_account = options.get('service_account')
         self.private_key = options.get('private_key')
         self.project_id = options.get('project_id')
+        self.scope = options.get('scope')
 
-    def auth(self):
+    def auth_using_gcloud(self):
         self.credentials = GoogleCredentials.get_application_default()
         return self
+
+    def auth_using_service_account(self, service_account, private_key, scope):
+        private_key_content = None
+        with open(private_key) as f:
+            private_key_content = f.read()
+        self.credentials = SignedJwtAssertionCredentials(
+            service_account,
+            private_key_content,
+            scope
+        )
+        return self
+
+    def auth(self):
+        if self.service_account is not None:
+            return self.auth_using_service_account(self.service_account, self.private_key, self.scope)
+        else:
+            return self.auth_using_gcloud()
 
     def build(self, api_name, api_version, **options):
         self.discovery_uri = 'https://www.googleapis.com/discovery/v1/apis/%s/%s/rest' % (api_name, api_version)
