@@ -5,6 +5,7 @@ setup(
     packages=[
         'google_api_clients',
         'google_api_clients.bigquery',
+        'google_api_clients.pubsub',
     ],
     version='0.0.1',
     author='Shoji Kai',
