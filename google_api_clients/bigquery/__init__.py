@@ -498,16 +498,7 @@ class BigQuery(GoogleApiClient):
         elif res['jobComplete'] is False:
             res = self.wait_job(job_id, timeout=options.get('timeout', BigQuery.JOB_WAIT_TIMEOUT))
 
-        if 'rows' not in res:
-            return []
-        else:
-            ret = []
-            for row in res['rows']:
-                ret.append([column['v'] for column in row['f']])
-            if 'pageToken' in res:
-                ret.extend(self.get_query_results(res['jobReference']['jobId'], page_token=res['pageToken'],
-                    start_index=len(res['rows'])))
-            return ret
+        return self.get_query_results(job_id)
 
     def query(self, query, **options):
         return self.select(query, **options)
